@@ -1,4 +1,4 @@
-TRGN510 Final Project
+TRGN510 Final Project Plan
 ================
 Title:
 ------------------
