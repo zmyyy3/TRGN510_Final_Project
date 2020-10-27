@@ -14,7 +14,7 @@ Overview of project:
 ----------------------
 * Due to high resolution, RNA sequencing (RNA-seq) has become a critical method for analyzing differential gene expression. For this project, RNA-seq data would be a great choice. The age of the patients is the variables in this project. Therefore, the RNA-seq data file in the HT-seq format for melanoma in white males in the age of 30-40 and white males in the age of 70-80 be analyzed in the project.
 * The objective is to use the Bioconductor in R to analyze the differential gene expression of melanoma in white males in the age of 30-40 and white males in the age of 70-80.
-* The following link is a reference of Vignette https://www.bioconductor.org/packages/devel/workflows/vignettes/RNAseq123/inst/doc/limmaWorkflow.html
+* The following link is a reference of Vignette. https://www.bioconductor.org/packages/devel/workflows/vignettes/RNAseq123/inst/doc/limmaWorkflow.html
 
 Data:
 ------------
