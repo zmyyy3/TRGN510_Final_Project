@@ -225,4 +225,36 @@ project_data_1 <- merge(genes,project_data_1, by = "ENSEMBL")
 head(project_data_1)
 ```
 
+# Data pre-processing
+```{r}
+library(limma)
+library(edgeR)
+```
+
+```{r}
+group <- c(rep("young",20), rep("old",20))
+```
+
+```{r}
+y <- DGEList(counts = project_data_1[5:44], group = group)
+```
+
+
+```{r}
+cpm <- cpm(y)
+```
+
+
+```{r}
+lcpm <- cpm(y, log=TRUE)
+```
+
+
+```{r}
+L <- mean(y$samples$lib.size) * 1e-6
+M <- median(y$samples$lib.size) * 1e-6
+c(L, M)
+summary(lcpm)
+
+```
 

@@ -850,6 +850,95 @@ head(project_data_1)</code></pre>
 ## 5    887    530    725    769    475    834   2436
 ## 6    127    752    521   3140    854    163    570</code></pre>
 </div>
+<div id="data-pre-processing" class="section level1">
+<h1>Data pre-processing</h1>
+<pre class="r"><code>library(limma)</code></pre>
+<pre><code>## 
+## Attaching package: 'limma'</code></pre>
+<pre><code>## The following object is masked from 'package:BiocGenerics':
+## 
+##     plotMA</code></pre>
+<pre class="r"><code>library(edgeR)</code></pre>
+<pre class="r"><code>group &lt;- c(rep(&quot;young&quot;,20), rep(&quot;old&quot;,20))</code></pre>
+<pre class="r"><code>y &lt;- DGEList(counts = project_data_1[5:44], group = group)</code></pre>
+<pre class="r"><code>cpm &lt;- cpm(y)</code></pre>
+<pre class="r"><code>lcpm &lt;- cpm(y, log=TRUE)</code></pre>
+<pre class="r"><code>L &lt;- mean(y$samples$lib.size) * 1e-6
+M &lt;- median(y$samples$lib.size) * 1e-6
+c(L, M)</code></pre>
+<pre><code>## [1] 61.38437 61.01972</code></pre>
+<pre class="r"><code>summary(lcpm)</code></pre>
+<pre><code>##     young_1            young_2           young_3           young_4       
+##  Min.   :-4.93980   Min.   :-4.9398   Min.   :-4.9398   Min.   :-4.9398  
+##  1st Qu.:-4.93980   1st Qu.:-4.9398   1st Qu.:-4.9398   1st Qu.:-4.9398  
+##  Median :-4.29254   Median :-4.3110   Median :-4.3391   Median :-4.4229  
+##  Mean   :-2.11882   Mean   :-2.2066   Mean   :-2.1783   Mean   :-2.1425  
+##  3rd Qu.:-0.06649   3rd Qu.:-0.3583   3rd Qu.:-0.2224   3rd Qu.:-0.1471  
+##  Max.   :13.97915   Max.   :14.1236   Max.   :13.7929   Max.   :13.5459  
+##     young_5           young_6           young_7           young_8      
+##  Min.   :-4.9398   Min.   :-4.9398   Min.   :-4.9398   Min.   :-4.940  
+##  1st Qu.:-4.9398   1st Qu.:-4.9398   1st Qu.:-4.9398   1st Qu.:-4.940  
+##  Median :-4.9398   Median :-4.2202   Median :-4.4082   Median :-4.940  
+##  Mean   :-2.2338   Mean   :-2.0843   Mean   :-2.1342   Mean   :-2.271  
+##  3rd Qu.:-0.4429   3rd Qu.: 0.2527   3rd Qu.:-0.2299   3rd Qu.:-0.330  
+##  Max.   :13.9619   Max.   :15.0740   Max.   :13.4933   Max.   :13.496  
+##     young_9            young_10          young_11          young_12      
+##  Min.   :-4.93980   Min.   :-4.9398   Min.   :-4.9398   Min.   :-4.9398  
+##  1st Qu.:-4.93980   1st Qu.:-4.9398   1st Qu.:-4.9398   1st Qu.:-4.9398  
+##  Median :-4.45298   Median :-4.9398   Median :-4.4019   Median :-4.4592  
+##  Mean   :-2.05992   Mean   :-2.1644   Mean   :-2.1960   Mean   :-2.0497  
+##  3rd Qu.: 0.07391   3rd Qu.:-0.1193   3rd Qu.:-0.3794   3rd Qu.: 0.1893  
+##  Max.   :12.76807   Max.   :13.5267   Max.   :14.0498   Max.   :13.6716  
+##     young_13          young_14           young_15          young_16      
+##  Min.   :-4.9398   Min.   :-4.93980   Min.   :-4.9398   Min.   :-4.9398  
+##  1st Qu.:-4.9398   1st Qu.:-4.93980   1st Qu.:-4.9398   1st Qu.:-4.9398  
+##  Median :-4.4242   Median :-4.27170   Median :-4.4185   Median :-4.3509  
+##  Mean   :-2.2067   Mean   :-2.09037   Mean   :-2.2227   Mean   :-2.1576  
+##  3rd Qu.:-0.1073   3rd Qu.: 0.01615   3rd Qu.:-0.2501   3rd Qu.:-0.3137  
+##  Max.   :13.6990   Max.   :14.85717   Max.   :14.1657   Max.   :13.5951  
+##     young_17           young_18          young_19         young_20       
+##  Min.   :-4.93980   Min.   :-4.9398   Min.   :-4.940   Min.   :-4.93980  
+##  1st Qu.:-4.93980   1st Qu.:-4.9398   1st Qu.:-4.940   1st Qu.:-4.93980  
+##  Median :-4.40446   Median :-4.9398   Median :-4.940   Median :-4.34638  
+##  Mean   :-2.15571   Mean   :-2.1526   Mean   :-2.270   Mean   :-2.08751  
+##  3rd Qu.:-0.08901   3rd Qu.: 0.1286   3rd Qu.:-0.224   3rd Qu.:-0.08256  
+##  Max.   :13.75512   Max.   :13.9294   Max.   :13.699   Max.   :14.02919  
+##      old_1             old_2             old_3            old_4        
+##  Min.   :-4.9398   Min.   :-4.9398   Min.   :-4.940   Min.   :-4.9398  
+##  1st Qu.:-4.9398   1st Qu.:-4.9398   1st Qu.:-4.940   1st Qu.:-4.9398  
+##  Median :-4.9398   Median :-4.3135   Median :-4.940   Median :-4.2994  
+##  Mean   :-2.3846   Mean   :-2.2106   Mean   :-2.380   Mean   :-1.8550  
+##  3rd Qu.:-0.8504   3rd Qu.:-0.2092   3rd Qu.:-1.116   3rd Qu.: 0.8757  
+##  Max.   :14.4500   Max.   :14.5149   Max.   :14.554   Max.   :13.5197  
+##      old_5            old_6             old_7            old_8        
+##  Min.   :-4.940   Min.   :-4.9398   Min.   :-4.940   Min.   :-4.9398  
+##  1st Qu.:-4.940   1st Qu.:-4.9398   1st Qu.:-4.940   1st Qu.:-4.9398  
+##  Median :-4.355   Median :-4.3398   Median :-4.940   Median :-4.3363  
+##  Mean   :-1.857   Mean   :-2.1741   Mean   :-2.733   Mean   :-2.0561  
+##  3rd Qu.: 0.629   3rd Qu.:-0.3425   3rd Qu.:-1.752   3rd Qu.: 0.1135  
+##  Max.   :12.708   Max.   :13.7314   Max.   :16.546   Max.   :14.2120  
+##      old_9             old_10            old_11            old_12       
+##  Min.   :-4.9398   Min.   :-4.9398   Min.   :-4.9398   Min.   :-4.9398  
+##  1st Qu.:-4.9398   1st Qu.:-4.9398   1st Qu.:-4.9398   1st Qu.:-4.9398  
+##  Median :-4.9398   Median :-4.4717   Median :-4.9398   Median :-4.9398  
+##  Mean   :-2.2812   Mean   :-2.0027   Mean   :-2.2664   Mean   :-2.0707  
+##  3rd Qu.:-0.6297   3rd Qu.: 0.1941   3rd Qu.:-0.4642   3rd Qu.: 0.1022  
+##  Max.   :13.4691   Max.   :13.2619   Max.   :13.6886   Max.   :13.3304  
+##      old_13            old_14             old_15            old_16      
+##  Min.   :-4.9398   Min.   :-4.93980   Min.   :-4.9398   Min.   :-4.940  
+##  1st Qu.:-4.9398   1st Qu.:-4.93980   1st Qu.:-4.9398   1st Qu.:-4.940  
+##  Median :-4.3537   Median :-4.32958   Median :-4.4172   Median :-4.940  
+##  Mean   :-2.1576   Mean   :-2.06000   Mean   :-2.0424   Mean   :-2.264  
+##  3rd Qu.:-0.2928   3rd Qu.: 0.06304   3rd Qu.: 0.2093   3rd Qu.:-0.545  
+##  Max.   :13.6929   Max.   :13.00484   Max.   :14.1510   Max.   :12.922  
+##      old_17             old_18             old_19            old_20       
+##  Min.   :-4.93980   Min.   :-4.93980   Min.   :-4.9398   Min.   :-4.9398  
+##  1st Qu.:-4.93980   1st Qu.:-4.93980   1st Qu.:-4.9398   1st Qu.:-4.9398  
+##  Median :-4.46293   Median :-4.38725   Median :-4.4129   Median :-4.4760  
+##  Mean   :-2.12041   Mean   :-2.15906   Mean   :-2.1454   Mean   :-2.1598  
+##  3rd Qu.: 0.02192   3rd Qu.:-0.08179   3rd Qu.:-0.1844   3rd Qu.:-0.3244  
+##  Max.   :13.52625   Max.   :13.85962   Max.   :13.7724   Max.   :12.7302</code></pre>
+</div>
 
 
 
