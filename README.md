@@ -66,10 +66,12 @@ All of the data files are obtained from [GDC Data Portal](https://portal.gdc.can
 Milestone 1:
 ----------------
 * Download a total of 40 datasets from the GCD data portal; import these datasets into R; process the datasets and integrate them into a format that meets the analysis standards. The above steps will be completed on November 3.
+* *UPDATE: This milestone has been completed. (11/3/2020)*
 
 Milestone 2:
 ----------------
 * Perform differential expression analysis on different data sets created in milestone 1 and get some plots and graphs. The above steps will be completed by November 12th.
+* *UPDATE: This milestone is in progress. (11/3/2020)*
 
 
 Deliverable:
