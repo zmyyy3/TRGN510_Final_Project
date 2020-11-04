@@ -1,0 +1,228 @@
+---
+title: "TRGN510_Final_Project"
+author: "Mengyuan Zhang"
+date: "10/25/2020"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+# Check current working directory
+```{r}
+getwd()
+```
+
+# Set working directory
+```{r}
+setwd("/Users/zmyyy/Desktop/510/final_project/raw_young")
+```
+
+# Load the packages that will be used in the following steps 
+```{r}
+library(R.utils)
+library(stringr)
+library(dplyr)
+library(Homo.sapiens)
+library(gsubfn)
+```
+
+
+
+```{r}
+options(stringsAsFactors = FALSE)
+```
+
+# Load and integrate the data of young group
+Unzip the original data folder of young group
+```{r}
+#you may need the following code to unzip the original data
+#R.utils::gunzip("gdc_download_20201027_215715.193634.tar.gz")
+```
+
+Untar the original data folder
+```{r}
+#you may need the following code to untar the original data
+#utils::untar("gdc_download_20201027_215715.193634.tar", exdir = ".")
+```
+
+Create a new folder named "row_young_data" 
+```{r}
+setwd("/Users/zmyyy/Desktop/510/final_project")
+dir.create('raw_young_data')
+```
+
+Find all of files contained in the original data folder, and copy all of the files into the new folder we created last step.
+```{r}
+for (dirname in dir('raw_young')){
+  file <- list.files(paste0(getwd(),'/raw_young/',dirname), pattern = '*.counts')
+  file.copy(paste0(getwd(),'/raw_young/',dirname,'/',file), 'raw_young_data')
+}
+```
+
+```{r}
+setwd("/Users/zmyyy/Desktop/510/final_project/raw_young_data")
+```
+
+Because the original names of files are so complicated, I am going to give these files new names for this project to easily indentify them. 
+Create list1 that containd 20 file names.
+```{r}
+list1 <- list.files("/Users/zmyyy/Desktop/510/final_project/raw_young_data", pattern = '*.gz')
+list1
+```
+
+Create list2 that containd the 20 new names
+```{r}
+list2 <- str_c(c("young"), c(1:20), sep = "_")
+list2
+```
+
+Create a data frame that included the original names and the new names, rename the names of the columns
+```{r}
+young_name <- as.data.frame(list(list1,list2))
+colnames(young_name) <- c("file_names", "project_names")
+```
+
+Read the first file as a test to check the format
+```{r}
+setwd("/Users/zmyyy/Desktop/510/final_project/raw_young_data")
+test_young <- data.table::fread(young_name$file_names[1])
+```
+
+Create a data frame containing all data of the 20 files
+```{r}
+setwd("/Users/zmyyy/Desktop/510/final_project/raw_young_data")
+young_data <- data.frame(matrix(NA,nrow(test_young),nrow(young_name)))
+for ( i in 1:nrow(young_name)) {
+  print(i)
+  young_data[,i] = data.table::fread(young_name$file_names[i])[,2]
+}
+colnames(young_data) <- young_name$project_names
+```
+
+Create a data frame containing all ensembl IDs
+```{r}
+setwd("/Users/zmyyy/Desktop/510/final_project/raw_young_data")
+ensembl_id <- data.table::fread(young_name$file_names[i])$V1
+```
+
+Combine the the data and ensembl IDs
+```{r}
+young_data <- cbind(ensembl_id = ensembl_id, young_data)
+```
+
+Check the last 6 rows data
+```{r}
+tail(young_data)
+```
+
+The last 5 rows data are different from the others, so delete the last 5 rows
+```{r}
+young_data <- young_data[1:(nrow(young_data)-5),]
+```
+
+Check if we successfully delete the last 5 rows
+```{r}
+tail(young_data)
+```
+
+# Load and integrate data of the old group
+Do the same steps with the young group
+```{r}
+setwd("/Users/zmyyy/Desktop/510/final_project/raw_old")
+#you may need the following code to unzip the original data
+#R.utils::gunzip("gdc_download_20201027_220002.770079.tar.gz")
+```
+
+
+```{r}
+#you may need the following code to untar the original data
+#utils::untar("gdc_download_20201027_220002.770079.tar", exdir = ".")
+```
+
+```{r}
+setwd("/Users/zmyyy/Desktop/510/final_project")
+dir.create('raw_old_data')
+```
+
+```{r}
+for (dirname in dir('raw_old')){
+  file <- list.files(paste0(getwd(),'/raw_old/',dirname), pattern = '*.counts')
+  file.copy(paste0(getwd(),'/raw_old/',dirname,'/',file), 'raw_old_data')
+}
+```
+
+```{r}
+list3 <- list.files("/Users/zmyyy/Desktop/510/final_project/raw_old_data",pattern = '*.counts')
+list3
+```
+
+```{r}
+list4 <- str_c(c("old"), c(1:20), sep = "_")
+list4
+```
+
+```{r}
+old_name <- as.data.frame(list(list3,list4))
+colnames(old_name) <- c("file_names", "project_names")
+```
+
+
+```{r}
+setwd("/Users/zmyyy/Desktop/510/final_project/raw_old_data")
+test_old <- data.table::fread(old_name$file_names[1])
+old_data <- data.frame(matrix(NA,nrow(test_old),nrow(old_name)))
+for ( i in 1:nrow(old_name)) {
+  print(i)
+  old_data[,i] = data.table::fread(old_name$file_names[i])[,2]
+}
+colnames(old_data) <- old_name$project_names
+```
+
+
+```{r}
+old_data <- cbind(ensembl_id = ensembl_id, old_data)
+```
+
+```{r}
+tail(old_data)
+old_data <- old_data[1:(nrow(old_data)-5),]
+```
+
+```{r}
+tail(old_data)
+```
+
+# Combine the data of young group and old group into a usable format
+```{r}
+project_data <- merge(young_data, old_data, by = "ensembl_id")
+```
+
+Ensemnl_id in project_data contains ".", I am going to remove the "." in order to macth the ENSEMBL IDs with gene names
+```{r}
+ENSEMBL<- gsub("\\.\\d*", "", project_data$ensembl_id)
+head(ENSEMBL)
+```
+
+Select gene names from Homo sapiens
+```{r}
+genes <- select(Homo.sapiens, keys=ENSEMBL, columns=c("SYMBOL", "TXCHROM"), 
+                keytype="ENSEMBL")
+```
+
+The rows number do not match the row number of project_data, so delete the duplicated gene names
+```{r}
+genes <- genes[!duplicated(genes$ENSEMBL),]
+```
+
+Due to the ensembl_id in project_data do not macth the ENSEMBL IDs in genes, combine the ENSEMBL and project_data to make project_data_1 contain the same 
+```{r}
+project_data_1 <- cbind(ENSEMBL, project_data)
+```
+
+Combine the genes and project_data_1 to generat the data frame that will be used in followng steps
+```{r}
+project_data_1 <- merge(genes,project_data_1, by = "ENSEMBL")
+head(project_data_1)
+```
+
+
