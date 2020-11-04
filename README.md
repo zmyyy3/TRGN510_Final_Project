@@ -77,7 +77,7 @@ R MarkDown
 
 
 
-*UPDATE(11/3/2020)
+*UPDATE(11/3/2020)*
 ================
 * *Milestone1 has been completed. See TRGN510_FINAL_PROJECT_milestone1.Rmd for details.* 
-* *Milestone2 is in progress. *
+* *Milestone2 is in progress.*
