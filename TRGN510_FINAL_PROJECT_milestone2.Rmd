@@ -1,0 +1,408 @@
+---
+title: "TRGN510_Final_Project"
+author: "Mengyuan Zhang"
+date: "10/25/2020"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+# Check current working directory
+```{r}
+getwd()
+```
+
+# Data Packaging
+## Set working directory
+```{r}
+setwd("/Users/zmyyy/Desktop/510/final_project/raw_young")
+```
+
+## Load the packages that will be used in the following steps 
+```{r}
+library(R.utils)
+library(stringr)
+library(dplyr)
+library(Homo.sapiens)
+library(gsubfn)
+```
+
+
+
+```{r}
+options(stringsAsFactors = FALSE)
+```
+
+## Load and integrate the data of young group
+Unzip the original data folder of young group
+```{r}
+#you may need the following code to unzip the original data
+#R.utils::gunzip("gdc_download_20201027_215715.193634.tar.gz")
+```
+
+Untar the original data folder
+```{r}
+#you may need the following code to untar the original data
+#utils::untar("gdc_download_20201027_215715.193634.tar", exdir = ".")
+```
+
+Create a new folder named "row_young_data" 
+```{r}
+setwd("/Users/zmyyy/Desktop/510/final_project")
+dir.create('raw_young_data')
+```
+
+Find all of files contained in the original data folder, and copy all of the files into the new folder we created last step.
+```{r}
+for (dirname in dir('raw_young')){
+  file <- list.files(paste0(getwd(),'/raw_young/',dirname), pattern = '*.counts')
+  file.copy(paste0(getwd(),'/raw_young/',dirname,'/',file), 'raw_young_data')
+}
+```
+
+```{r}
+setwd("/Users/zmyyy/Desktop/510/final_project/raw_young_data")
+```
+
+Because the original names of files are so complicated, I am going to give these files new names for this project to easily indentify them. 
+Create list1 that containd 20 file names.
+```{r}
+list1 <- list.files("/Users/zmyyy/Desktop/510/final_project/raw_young_data", pattern = '*.gz')
+list1
+```
+
+Create list2 that containd the 20 new names
+```{r}
+list2 <- str_c(c("young"), c(1:20), sep = "_")
+list2
+```
+
+Create a data frame that included the original names and the new names, rename the names of the columns
+```{r}
+young_name <- as.data.frame(list(list1,list2))
+colnames(young_name) <- c("file_names", "project_names")
+```
+
+Read the first file as a test to check the format
+```{r}
+setwd("/Users/zmyyy/Desktop/510/final_project/raw_young_data")
+test_young <- data.table::fread(young_name$file_names[1])
+```
+
+Create a data frame containing all data of the 20 files
+```{r}
+setwd("/Users/zmyyy/Desktop/510/final_project/raw_young_data")
+young_data <- data.frame(matrix(NA,nrow(test_young),nrow(young_name)))
+for ( i in 1:nrow(young_name)) {
+  print(i)
+  young_data[,i] = data.table::fread(young_name$file_names[i])[,2]
+}
+colnames(young_data) <- young_name$project_names
+```
+
+Create a data frame containing all ensembl IDs
+```{r}
+setwd("/Users/zmyyy/Desktop/510/final_project/raw_young_data")
+ensembl_id <- data.table::fread(young_name$file_names[i])$V1
+```
+
+Combine the the data and ensembl IDs
+```{r}
+young_data <- cbind(ensembl_id = ensembl_id, young_data)
+```
+
+Check the last 6 rows data
+```{r}
+tail(young_data)
+```
+
+The last 5 rows data are different from the others, so delete the last 5 rows
+```{r}
+young_data <- young_data[1:(nrow(young_data)-5),]
+```
+
+Check if we successfully delete the last 5 rows
+```{r}
+tail(young_data)
+```
+
+## Load and integrate data of the old group
+Do the same steps with the young group
+```{r}
+setwd("/Users/zmyyy/Desktop/510/final_project/raw_old")
+#you may need the following code to unzip the original data
+#R.utils::gunzip("gdc_download_20201027_220002.770079.tar.gz")
+```
+
+
+```{r}
+#you may need the following code to untar the original data
+#utils::untar("gdc_download_20201027_220002.770079.tar", exdir = ".")
+```
+
+```{r}
+setwd("/Users/zmyyy/Desktop/510/final_project")
+dir.create('raw_old_data')
+```
+
+```{r}
+for (dirname in dir('raw_old')){
+  file <- list.files(paste0(getwd(),'/raw_old/',dirname), pattern = '*.counts')
+  file.copy(paste0(getwd(),'/raw_old/',dirname,'/',file), 'raw_old_data')
+}
+```
+
+```{r}
+list3 <- list.files("/Users/zmyyy/Desktop/510/final_project/raw_old_data",pattern = '*.counts')
+list3
+```
+
+```{r}
+list4 <- str_c(c("old"), c(1:20), sep = "_")
+list4
+```
+
+```{r}
+old_name <- as.data.frame(list(list3,list4))
+colnames(old_name) <- c("file_names", "project_names")
+```
+
+
+```{r}
+setwd("/Users/zmyyy/Desktop/510/final_project/raw_old_data")
+test_old <- data.table::fread(old_name$file_names[1])
+old_data <- data.frame(matrix(NA,nrow(test_old),nrow(old_name)))
+for ( i in 1:nrow(old_name)) {
+  print(i)
+  old_data[,i] = data.table::fread(old_name$file_names[i])[,2]
+}
+colnames(old_data) <- old_name$project_names
+```
+
+
+```{r}
+old_data <- cbind(ensembl_id = ensembl_id, old_data)
+```
+
+```{r}
+tail(old_data)
+old_data <- old_data[1:(nrow(old_data)-5),]
+```
+
+```{r}
+tail(old_data)
+```
+
+## Combine the data of young group and old group into a usable format
+```{r}
+project_data <- merge(young_data, old_data, by = "ensembl_id")
+```
+
+Ensemnl_id in project_data contains ".", I am going to remove the "." in order to macth the ENSEMBL IDs with gene names
+```{r}
+ENSEMBL<- gsub("\\.\\d*", "", project_data$ensembl_id)
+head(ENSEMBL)
+```
+
+Select gene names from Homo sapiens
+```{r}
+genes <- select(Homo.sapiens, keys=ENSEMBL, columns=c("SYMBOL", "TXCHROM"), 
+                keytype="ENSEMBL")
+```
+
+The rows number do not match the row number of project_data, so delete the duplicated gene names
+```{r}
+genes <- genes[!duplicated(genes$ENSEMBL),]
+```
+
+Due to the ensembl_id in project_data do not macth the ENSEMBL IDs in genes, combine the ENSEMBL and project_data to make project_data_1 contain the same 
+```{r}
+project_data_1 <- cbind(ENSEMBL, project_data)
+```
+
+Combine the genes and project_data_1 to generat the data frame that will be used in followng steps
+```{r}
+project_data_1 <- merge(genes,project_data_1, by = "ENSEMBL")
+head(project_data_1)
+```
+
+# Data pre-processing
+```{r}
+library(limma)
+library(edgeR)
+```
+
+```{r}
+group <- c(rep("young",20), rep("old",20))
+```
+
+```{r}
+y <- DGEList(counts = project_data_1[5:44], group = group)
+```
+
+## Transformations from the raw-scale
+```{r}
+cpm <- cpm(y)
+lcpm <- cpm(y, log=TRUE)
+L <- mean(y$samples$lib.size) * 1e-6
+M <- median(y$samples$lib.size) * 1e-6
+c(L, M)
+summary(lcpm)
+
+```
+
+## Transformations from the raw-scale
+Some genes have low expression and are meaningfulless, so these genes should be removed.
+```{r}
+table(rowSums(y$counts==0)==9)
+```
+
+There is another effecient way to filter genes with low expression.
+```{r}
+keep.exprs <- filterByExpr(y, group=group)
+y <- y[keep.exprs,, keep.lib.sizes=FALSE]
+dim(y)
+```
+
+Use the package RColorBrewer to generate a graph 
+```{r}
+lcpm.cutoff <- log2(10/M + 2/L)
+library(RColorBrewer)
+nsamples <- ncol(y)
+col <- brewer.pal(nsamples, "Paired")
+```
+
+
+```{r}
+par(mfrow=c(1,2))
+plot(density(lcpm[,1]), col=col[1], lwd=2, ylim=c(0,0.26), las=2, main="", xlab="")
+title(main="A. Raw data", xlab="Log-cpm")
+abline(v=lcpm.cutoff, lty=3)
+for (i in 2:nsamples){
+den <- density(lcpm[,i])
+lines(den$x, den$y, col=col[i], lwd=2)
+}
+legend("topright", group, text.col=col, bty="n")
+lcpm <- cpm(y, log=TRUE)
+plot(density(lcpm[,1]), col=col[1], lwd=2, ylim=c(0,0.26), las=2, main="", xlab="")
+title(main="B. Filtered data", xlab="Log-cpm")
+abline(v=lcpm.cutoff, lty=3)
+for (i in 2:nsamples){
+den <- density(lcpm[,i])
+lines(den$x, den$y, col=col[i], lwd=2)
+}
+legend("topright", group, text.col=col, bty="n")
+```
+
+
+## Normalising gene expression distributions
+Store the resultant values as a norm.factor dataset
+```{r}
+y <- calcNormFactors(y, method = "TMM")
+y$samples$norm.factors
+```
+
+To have a better understanding of data normalization, the counts of the young_1 were reduced to 1% and the counts of the young_2 were increased to 1000%
+```{r}
+y2 <- y
+y2$samples$norm.factors <- 1
+y2$counts[,1] <- ceiling(y2$counts[,1]*0.01)
+y2$counts[,2] <- y2$counts[,2]*10
+```
+
+This is the graph using unnormalised data
+```{r}
+par(mfrow=c(1,2))
+lcpm <- cpm(y2, log=TRUE)
+boxplot(lcpm, las=2, col=col, main="")
+title(main="A. Example: Unnormalised data",ylab="Log-cpm")
+y2 <- calcNormFactors(y2)  
+y2$samples$norm.factors
+```
+
+This is the graph using normalised data
+```{r}
+lcpm <- cpm(y2, log=TRUE)
+boxplot(lcpm, las=2, col=col, main="")
+title(main="B. Example: Normalised data",ylab="Log-cpm")
+```
+
+
+## Unsupervised clustering of data
+Generate graphs by using plotMDS in limma, and the graphs will show the similarity and dissimilarity in samples.
+```{r}
+lcpm <- cpm(y, log=TRUE)
+par(mfrow=c(1,1))
+col.group <- group
+col.group
+levels(col.group) <-  brewer.pal(nlevels(col.group), "Set1")
+col.group <- as.character(col.group)
+col.group <- c("purple","red")[group]
+plotMDS(lcpm, labels=group, col=col.group)
+title(main="A. Sample groups")
+```
+
+An interactive version of this graph can be launched using glimma.
+```{r}
+library(Glimma)
+glMDSPlot(lcpm,groups = group)
+```
+
+# Differential expression analysis
+## Normalising gene expression distributions
+create a design matrix with both the groups of data.
+```{r}
+design <- model.matrix(~0+group)
+colnames(design) <- gsub("group", "", colnames(design))
+design
+```
+
+Contrasts for the two groups are created and stored in a matrix
+```{r}
+contr.matrix <- makeContrasts(
+   youngvsold = young-old, 
+   levels = colnames(design))
+contr.matrix
+```
+
+## Removing heteroscedascity from count data
+Transform the raw data into the normalised data
+```{r}
+par(mfrow=c(1,2))
+v <- voom(y, design, plot=TRUE)
+v
+```
+
+```{r}
+vfit <- lmFit(v, design)
+vfit <- contrasts.fit(vfit, contrasts=contr.matrix)
+efit <- eBayes(vfit)
+plotSA(efit, main="Final model: Mean-variance trend")
+```
+
+## Examining the number of DE genes 
+Use T-statistics to get significant differential gene expression
+```{r}
+summary(decideTests(efit))
+```
+
+Due to I didn't get any differential gene expression from the last step, I changed lfc from 1 to 0.01 to see more possible significant DGE.
+```{r}
+tfit <- treat(vfit, lfc=0.01)
+dt <- decideTests(tfit)
+summary(dt)
+```
+
+Unfortunately, after the change of lfc, I still cannot get any significant DGE. Therefore, the results showing below are nothing.
+```{r}
+de.common <- which(dt[,1]!=0)
+length(de.common)
+```
+
+```{r}
+head(tfit$genes$SYMBOL[de.common], n=20)
+```
+
+```{r}
+vennDiagram(dt[,1], circle.col=c("turquoise", "salmon"))
+```
