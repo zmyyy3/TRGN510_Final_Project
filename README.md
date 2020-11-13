@@ -81,3 +81,10 @@ R MarkDown
 ================
 * *Milestone1 has been completed. See TRGN510_FINAL_PROJECT_milestone1.Rmd for details.* 
 * *Milestone2 is in progress.*
+
+
+*UPDATE(11/12/2020)*
+================
+* *Milestone2 partically completed. Due to I did get any significant differential gene expression, I changed lfc from 1 to 0.01. Unfortunately, after the change of lfc, I still cannot get any significant differential gene expression. Therefore, the results of the following steps might not available. I might find another way to check if there is any significant differential gene expression.* 
+
+
