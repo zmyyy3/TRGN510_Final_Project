@@ -94,6 +94,6 @@ Known Issues:
 *UPDATE(11/17/2020)*
 ------------
 * *The process of organizing data has been adjusted.*
-* *To solve the problem of not being able to find significant differential gene expression in Milestone 2, I obtained multiple differentially expressed genes by simultaneously adjusting lfc and p.value. The value of lfc has been changed from 1 to 0.1, and p.value has been changed from 0.05 to 0.145.
+* *To solve the problem of not being able to find significant differential gene expression in Milestone 2, I obtained multiple differentially expressed genes by simultaneously adjusting lfc and p.value. The value of lfc has been changed from 1 to 0.1, and p.value has been changed from 0.05 to 0.145.*
 
 
