@@ -89,11 +89,11 @@ Known Issues:
 
 *UPDATE(11/12/2020)*
 -----------
-* *Milestone2 partically completed. Due to I did get any significant differential gene expression, I changed lfc from 1 to 0.01. Unfortunately, after the change of lfc, I still cannot get any significant differential gene expression. Therefore, the results of the following steps might not available. I might find another way to check if there is any significant differential gene expression.* 
+* *Milestone2 has been partically completed. Due to I did get any significant differential gene expression, I changed log-fold-change(lfc) threshold from 1 to 0.01. Unfortunately, after the change of lfc, I still cannot get any significant differential gene expression. Therefore, the results of the following steps might not available. I might find another way to check if there is any significant differential gene expression.* 
 
 *UPDATE(11/17/2020)*
 ------------
 * *The process of organizing data has been adjusted.*
-* *To solve the problem of not being able to find significant differential gene expression in Milestone 2, I obtained multiple differentially expressed genes by simultaneously adjusting lfc and p.value. The value of lfc has been changed from 1 to 0.1, and p.value has been changed from 0.05 to 0.145.*
+* *To solve the problem of not being able to find significant differential gene expression in Milestone 2, I obtained multiple differentially expressed genes by simultaneously adjusting lfc and p.value. The threshold of lfc has been changed from 1 to 0.1, and p.value has been changed from 0.05 to 0.145.*
 
 
