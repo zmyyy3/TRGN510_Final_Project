@@ -19,7 +19,9 @@ Overview of project:
 Data:
 ------------
 All of the data files are obtained from [GDC Data Portal](https://portal.gdc.cancer.gov/)
-* Data of white males in the age of 30-40:
+
+* This repository has two branches: the main branch containing README.md, R Markdowns and HTMLs, and the master branch containing data folders. There are two folders in the master branch: one is for the young group (age of 30-40), another one is for the old group (age of 70-80).
+* Data of white males in the age of 30-40 (folder "raw_young_data"):
 1. 15b87438-308c-491e-ac85-6fb75a470182.htseq.counts.gz
 2. bbe0252c-d51f-4e74-96b6-e4a0355ccda0.htseq.counts.gz
 3. 7b50493c-0691-4612-9721-d8cce38e847b.htseq.counts.gz
@@ -41,7 +43,7 @@ All of the data files are obtained from [GDC Data Portal](https://portal.gdc.can
 19. 7a241ae9-e218-4479-8096-d855cf3e8565.htseq.counts.gz
 20. 47efad89-24a3-4864-8a60-9315167f304f.htseq.counts.gz
 
-* Data of white males in the age of 70-80:
+* Data of white males in the age of 70-80 (raw_old_data):
 1. 11797830-6218-43c6-8c41-515583575668.htseq.counts.gz
 2. d79aad6b-f80d-4e0c-98f8-f367a4357e0c.htseq.counts.gz
 3. d79aad6b-f80d-4e0c-98f8-f367a4357e0c.htseq.counts.gz
@@ -77,8 +79,9 @@ R MarkDown
 
 Known Issues:
 ---------
-* 
-
+* In certain conditions, to define the significance more strictly, not only p-value needs to be adjusted, but lfc also needs to be greater than the minimum value. 
+*	In the project, I used the “Paired” color series of package "RColorBrewer." This series contains 12 colors, so If the number of samples is more than 12, the same color will be used to represent different samples.
+* I use the HUGO names in “Homo.Sapiens” to match the ENSEMBL IDs in the “htseq” document. However, some ENSEMBL IDs cannot find the corresponding HUGO names, so there will be some HUGO names of genes will show "NA."
 
 
 *UPDATE(11/3/2020)*
@@ -94,6 +97,6 @@ Known Issues:
 *UPDATE(11/17/2020)*
 ------------
 * *The process of organizing data has been adjusted.*
-* *To solve the problem of not being able to find significant differential gene expression in Milestone 2, I obtained multiple differentially expressed genes by simultaneously adjusting lfc and p.value. The threshold of lfc has been changed from 1 to 0.1, and p.value has been changed from 0.05 to 0.145.*
+* *To solve the problem of significant differential gene expression in Milestone 2, I obtained multiple differentially expressed genes by simultaneously adjusting lfc and p.value. The threshold of lfc has been changed from 1 to 0.1, and p.value has been changed from 0.05 to 0.145.*
 
 
